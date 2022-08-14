@@ -1,11 +1,13 @@
 FROM node:16 as dev
 
+ENV NODE_ENV=development
+
 # setup workdir (next commands will run under this context, but also the running container will inherit this - if not overriden at runtime)
 WORKDIR /usr/src/app/backend
 
 # Build App
-# - copy package.json and package-lock.json (optimise image build - copy only these files and run install, if these change rarely we can reuse this image layer too)
-COPY package*.json ./
+# - copy package-lock.json (optimise image build - copy only these files and run install, if these change rarely we can reuse this image layer too)
+COPY package*.json .
 
 # - install packages (optimise image build - run just install after copying package.json, we hope these will change rarer as the code, so we can reuse this image layer too)
 RUN npm install
@@ -15,15 +17,22 @@ COPY . .
 
 EXPOSE 3080
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:dev"]
 
 
 FROM node:16 as prod
 
+ENV NODE_ENV=production
+
 WORKDIR /usr/src/app/backend
 
-COPY --from=dev /usr/src/app/backend .
+# in production we dont need dev dependencies, running `npm ci` with `NODE_ENV=production` will install only the main dependencies
+COPY package*.json .
+RUN npm ci
+
+# we don't have a build stage, so just copy the files from docker context again
+COPY . .
 
 EXPOSE 3080
 
-CMD [ "node", "server.js" ]
+CMD ["npm", "start"]
