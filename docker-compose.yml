@@ -12,7 +12,7 @@ services:
       - POSTGRES_DB=bunny_books
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=need-to-replace
-      - FRONTEND_URL=${FRONTEND_URL-http://books.local.bunnyshell.com:8081}
+      - FRONTEND_URL=${FRONTEND_URL-http://books.local.bunnyshell.com:8080}
     ports:
       - "3080:3080"
     depends_on:
@@ -36,17 +36,11 @@ services:
         context: ./frontend
         target: ${FRONTEND_BUILD_TARGET:-dev} # use "prod" for production
         args:
-          REACT_APP_APP_URL: ${FRONTEND_URL-http://books.local.bunnyshell.com:8081}
           REACT_APP_BASE_API: ${BACKEND_URL-http://books-api.local.bunnyshell.com:3080}
-      environment:
-        # reverse proxy vars
-        - VIRTUAL_HOST=${FRONTEND_VIRTUAL_HOST:-books.local.bunnyshell.com}
-        - VIRTUAL_PORT=8080
       volumes:
         - ./frontend:/var/www/frontend:delegated
       ports:
-        - "80:8080"   # for production mode
-        - "8081:8081" # for development mode
+        - "8080:8080"
 
 volumes:
   db-data:
