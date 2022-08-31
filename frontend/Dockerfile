@@ -1,5 +1,5 @@
 # dev stage
-FROM node:16 as dev
+FROM node:16-alpine as dev
 
 ENV NODE_ENV development
 
@@ -29,8 +29,8 @@ FROM dev as build
 # - build app
 RUN npm run build
 
-
-FROM node:16 as prod
+# prod stage
+FROM node:16-alpine as prod
 
 ENV NODE_ENV production
 
