@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: >-
-            {{ required 'serviceImage is required.' .Values.serviceImage }}
+          image: {{ .Values.serviceImage }}
           ports:
             - containerPort: 3080
               protocol: TCP
