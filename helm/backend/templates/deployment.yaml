@@ -26,13 +26,13 @@ spec:
             - name: POSTGRES_HOST
               value: {{ .Values.postgres.host }}
             - name: POSTGRES_DB
-              values: {{ .Values.postgres.db }}
+              value: {{ .Values.postgres.db }}
             - name: POSTGRES_USER
-              values: {{ .Values.postgres.user }}
+              value: {{ .Values.postgres.user }}
             - name: POSTGRES_PASSWORD
-              values: {{ .Values.postgres.password }}
+              value: {{ .Values.postgres.password }}
             - name: FRONTEND_URL
-              values: {{ .Values.frontendUrl }}
+              value: {{ .Values.frontendUrl }}
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
   revisionHistoryLimit: 10
