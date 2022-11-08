@@ -45,7 +45,7 @@ function dbSyncWithRetry(maxRetries, sleepTime, db) {
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Bunnyshell - Getting Started app" });
+  res.json({ message: "Welcome to Bunnyshell - Getting Started app - line 48 - 8 Noiembrie 2022 x1" });
 });
 
 require("./app/routes/bunnystart.routes")(app);
