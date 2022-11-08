@@ -116,7 +116,7 @@ export default class BookList extends Component<Props, State>{
         {currentBook ? (<div className="col-md-12 mb-5">
             <div className="row books-row">
               <div className="col-3">
-                <div className="cover"/>
+                <div className="cover"><img src={currentBook.image} alt={currentBook.title} /></div>
               </div>
               <div className="col-9">
               <h4>Book</h4>
