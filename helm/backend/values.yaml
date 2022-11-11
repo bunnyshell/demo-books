@@ -9,3 +9,8 @@ postgres:
   user: postgres
   password: pass
 frontendUrl: https://example.com
+s3:
+  accessKeyId: replace-access-key
+  secretAccessKey: replace-secret
+  bucketName: my-bucket
+  bucketRegion: us-west-1
