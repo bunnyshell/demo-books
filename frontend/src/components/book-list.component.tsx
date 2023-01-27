@@ -143,7 +143,7 @@ export default class BookList extends Component<Props, State>{
         </div>
         ) : ( '' )}
         <div className="col-md-6">
-          <h4>Book List test 230126 x1</h4>
+          <h4>Book List test 230127 x1</h4>
           </div>
         <div className="col-md-6">
           <div className="input-group mb-3">
