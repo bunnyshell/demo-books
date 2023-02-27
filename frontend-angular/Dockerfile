@@ -38,7 +38,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install npm packages
-RUN npm install --only=production
+RUN npm install
 
 # Copy the source code to the container
 COPY . .
@@ -52,6 +52,9 @@ RUN sed -i "s|apiUrl: '.*',|apiUrl: '${API_URL}',|" src/environments/environment
 
 # Build the app
 RUN npm run build --configuration=production
+
+
+
 
 # Nginx stage
 FROM nginx:1.21.3-alpine AS prod
