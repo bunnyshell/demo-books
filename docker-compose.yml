@@ -40,8 +40,7 @@ services:
     volumes:
       - ./frontend-angular:/usr/src/app:delegated
     ports:
-      - "80:80"
-      - "4200:4200"
+      - "8080:8080"
 
 volumes:
   db-data:

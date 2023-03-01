@@ -4,9 +4,9 @@
   "scripts": {
     "json-run": "json-server --watch db.json",
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --disable-host-check",
+    "start": "ng serve --port 8080 --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "watch": "ng build --port 8080 --host 0.0.0.0 --disable-host-check --watch --configuration development",
     "test": "ng test"
   },
   "private": true,

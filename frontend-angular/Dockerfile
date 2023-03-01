@@ -14,7 +14,7 @@ WORKDIR /usr/src/app/
 COPY package*.json ./
 
 # - install packages (optimise image build - run just install after copying package.json, we hope these will change rarer as the code, so we can reuse this image layer too)
-RUN npm install
+RUN npm ci
 
 # Copy the source code to the container
 COPY . .
@@ -30,22 +30,9 @@ CMD ["npm", "start"]
 
 
 # prod (and build) stages
-FROM node:16-alpine AS build
+FROM dev AS build
 
-WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install npm packages
-RUN npm install
-
-# Copy the source code to the container
-COPY . .
-
-# Set the build arg for the API URL
-ARG API_URL
-ENV API_URL=$API_URL
+ENV NODE_ENV production
 
 # Update the environment file with the API URL
 RUN sed -i "s|apiUrl: '.*',|apiUrl: '${API_URL}',|" src/environments/environment.prod.ts
@@ -55,17 +42,16 @@ RUN npm run build --configuration=production
 
 
 
-
 # Nginx stage
 FROM nginx:1.21.3-alpine AS prod
 
 # Copy the built app to the Nginx HTML directory
-COPY --from=build /app/dist/frontend-angular /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/frontend-angular /usr/share/nginx/html
 
 COPY nginx.conf  /etc/nginx/conf.d/default.conf
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 8080
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
