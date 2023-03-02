@@ -22,7 +22,7 @@ COPY . .
 # Update the environment file with the API URL
 RUN sed -i "s|apiUrl: '.*',|apiUrl: '${API_URL}',|" src/environments/environment.ts
 
-EXPOSE 4200
+EXPOSE 8080
 
 # Start the app with ng serve
 CMD ["npm", "start"]
