@@ -48,7 +48,7 @@
           <td>
             <span
               [class]="{'badge': true, 'badge-success': item.available === true, 'badge-danger': item.available !== true}">
-              {{item.available === true ? 'In stock': 'Out of stock' }}
+              {{item.available === true ? 'Available': 'Not available' }}
             </span>
           </td>
           <td class="actions">
