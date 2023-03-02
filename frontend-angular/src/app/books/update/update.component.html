@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container updateForm">
     <legend>Update Book</legend>
     <form>
       <div class="mb-3">
@@ -13,6 +13,6 @@
         <input type="checkbox" name="available" [(ngModel)] = "bookForm.available" class="form-check-input" id="txtAvailable" /> &nbsp;
         <label for="txtAvailable" class="form-label">Available</label>
       </div>
-      <button type="button" (click)="update()" class="btn btn-primary">Update</button>
+      <button type="button" (click)="update()" class="btn btn-primary updateBtn">Update</button>
     </form>
 </div>
