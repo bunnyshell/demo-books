@@ -30,7 +30,7 @@ function dbSyncWithRetry(maxRetries, sleepTime, db) {
     if (maxRetries <= 0) {
       throw err;
     }
-    console.log(`Could not connect to database, waiting for ${sleepTime} seconds. ${maxRetries - 1} retries left`);
+    console.log(`Could not connect to database, waiting for ${sleepTime} seconds. ${maxRetries - 1} retries left: ${err}`);
     await sleep(sleepTime * 1000); // Sleeps for 2 seconds
 
     return dbSyncWithRetry(maxRetries - 1, sleepTime, db);

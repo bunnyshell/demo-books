@@ -8,28 +8,14 @@ services:
     volumes:
        - ./backend:/usr/src/app/backend
     environment:
-      - POSTGRES_HOST=db # name of the "db" service
-      - POSTGRES_DB=bunny_books
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=need-to-replace
+      - POSTGRES_HOST=replace-host
+      - POSTGRES_DB=neondb
+      - POSTGRES_USER=replace-user
+      - POSTGRES_PASSWORD=replace-password
+      - POSTGRES_ENDPOINT=replace-project
       - FRONTEND_URL=${FRONTEND_URL-http://books.local.bunnyshell.com:8080}
     ports:
       - "3080:3080"
-    depends_on:
-      - db
-  db:
-    container_name: bunnyshell-books-db
-    image: postgres
-    restart: always
-    user: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=bunny_books
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=need-to-replace
-    expose:
-      - 5432
   frontend:
       container_name: bunnyshell-books-frontend
       build:
