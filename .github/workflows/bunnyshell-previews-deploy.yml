@@ -18,3 +18,4 @@ jobs:
           *Bunnyshell* Environment created with the following endpoints:
           - "https://frontend-demo-books.bunnyenv.com"
           - "https://api-demo-books.bunnyenv.com"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
