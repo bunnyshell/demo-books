@@ -5,7 +5,8 @@ const process = require("process");
 const app = express();
 
 var corsOptions = {
-  origin: process.env.FRONTEND_URL
+  // need to strip ending slash from frontendUrl for CORS to work
+  origin: process.env.FRONTEND_URL.replace(/\/+$/, '')
 };
 
 app.use(cors(corsOptions));
