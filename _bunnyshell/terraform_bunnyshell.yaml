@@ -1,0 +1,98 @@
+kind: Environment
+name: 'Demo Books with Terraform'
+type: primary
+environmentVariables:
+  AWS_ACCESS_KEY_ID: your-key
+  AWS_REGION: your-region
+  AWS_SECRET_ACCESS_KEY: your-secret
+  POSTGRES_DB: bunny_books
+  POSTGRES_PASSWORD: mysecretpassword
+  POSTGRES_USER: postgres
+components:
+    -
+        kind: Application
+        name: backend
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: terraform
+        gitApplicationPath: backend
+        dockerCompose:
+            build:
+                context: ./backend
+                dockerfile: Dockerfile
+                target: prod
+            environment:
+                AWS_S3_ACCESS_KEY_ID: '{{ env.vars.AWS_ACCESS_KEY_ID }}'
+                AWS_S3_BUCKET_NAME: '{{ components.s3-bucket.exported.BUCKET_NAME }}'
+                AWS_S3_BUCKET_REGION: '{{ components.s3-bucket.exported.BUCKET_REGION }}'
+                AWS_S3_SECRET_ACCESS_KEY: '{{ env.vars.AWS_SECRET_ACCESS_KEY }}'
+                FRONTEND_URL: 'https://{{ components.frontend.ingress.hosts[0].hostname }}'
+                POSTGRES_HOST: db
+            ports:
+                - '3080:3080'
+        hosts:
+            -
+                hostname: 'backend-{{ env.base_domain }}'
+                path: /
+                servicePort: 3080
+    -
+        kind: Database
+        name: db
+        dockerCompose:
+            image: postgres
+            restart: always
+            user: postgres
+            ports:
+                - '5432:5432'
+        volumes:
+            -
+                name: db-data
+                mount: /var/lib/postgresql/data
+                subPath: ''
+    -
+        kind: Application
+        name: frontend
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: terraform
+        gitApplicationPath: frontend
+        dockerCompose:
+            build:
+                context: ./frontend
+                dockerfile: Dockerfile
+                args:
+                    REACT_APP_BASE_API: 'https://{{ components.backend.ingress.hosts[0] }}'
+                target: prod
+            ports:
+                - '8080:8080'
+        hosts:
+            -
+                hostname: 'frontend-{{ env.base_domain }}'
+                path: /
+                servicePort: 8080
+    -
+        kind: Terraform
+        name: s3-bucket
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: terraform
+        gitApplicationPath: /backend/_terraform
+        runnerImage: 'hashicorp/terraform:1.5.1'
+        deploy:
+            - 'cd backend/_terraform'
+            - '/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf'
+            - 'terraform init -input=false -no-color'
+            - 'terraform apply -var "bucket_name=demo-{{ env.unique }}" -input=false -auto-approve -no-color'
+            - 'BNS_TF_STATE_LIST=`terraform show -json`'
+            - 'BUCKET_NAME=`terraform output --raw s3_bucket_name`'
+            - 'BUCKET_REGION=`terraform output --raw s3_bucket_region`'
+        destroy:
+            - 'cd backend/_terraform'
+            - '/bns/helpers/terraform/get_managed_backend > zz_backend_override.tf'
+            - 'terraform init -input=false -no-color'
+            - 'terraform destroy -var "bucket_name=demo-{{ env.unique }}" -input=false -auto-approve -no-color'
+        exportVariables:
+            - BUCKET_NAME
+            - BUCKET_REGION
+volumes:
+    -
+        name: db-data
+        size: 1Gi
+        type: disk
