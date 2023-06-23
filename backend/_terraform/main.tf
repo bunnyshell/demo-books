@@ -2,6 +2,7 @@ provider "aws" {}
 
 resource "aws_s3_bucket" "demo_bunnyshell_books" {
   bucket = var.bucket_name
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "demo_bunnyshell_books_ownership" {
