@@ -4,10 +4,6 @@ resource "aws_s3_bucket" "demo_bunnyshell_books" {
   bucket = var.bucket_name
 }
 
-resource "aws_s3_bucket" "demo_bunnyshell_books" {
-  bucket = var.bucket_name
-}
-
 resource "aws_s3_bucket_ownership_controls" "demo_bunnyshell_books_ownership" {
   bucket = aws_s3_bucket.demo_bunnyshell_books.bucket
   rule {
