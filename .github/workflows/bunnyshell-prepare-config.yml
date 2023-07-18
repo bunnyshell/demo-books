@@ -16,5 +16,3 @@ jobs:
             bunnyshell-yaml-path: .bunnyshell/bunnyshell.yaml
             allowed-users: ${{ vars.BUNNYSHELL_ALLOWED_USERS }}
             git-ref: refs/pull/${{ github.event.number || github.event.issue.number }}/head
-            restricted-files: |
-                .bunnyshell/*
