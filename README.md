@@ -1,6 +1,6 @@
-# Bunnyshell Books - Demo App
+# Bunnyshell Books - Demo App with Xata
 
-This app is a CRUD example, composed out of a frontend, one backend service and one database.
+This app is a CRUD example, composed out of a frontend, one backend service and one [Xata](https://xata.io) database.
 Its purpose is to illustrate how you can quickly get started with Bunnyshell.
 
 Summary of app functional requirements:
@@ -27,6 +27,22 @@ Add the following line to `/etc/hosts` on your local machine
 ```
 127.0.0.1 books.local.bunnyshell.com books-api.local.bunnyshell.com
 ```
+
+To create the Xata database, [create an account and sign-in to Xata](https://app.xata.io), then create a new database named `books`. Then:
+
+- install the Xata CLI:
+
+```
+npm install @xata.io/cli@latest -g
+```
+
+- initialize the database with this command:
+
+```
+xata init --schema ./backend/schema.json --codegen=backend/app/models/xata.js --module=cjs
+```
+
+When prompted, select the `books` database that you have created.
 
 Then, just run `docker compose up` and open the apps:
 - frontend http://books.local.bunnyshell.com:8081
