@@ -13,6 +13,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=need-to-replace
       - FRONTEND_URL=${FRONTEND_URL-http://books.local.bunnyshell.com:8080}
+    env_file:
+      - .env
     ports:
       - "3080:3080"
     depends_on:
