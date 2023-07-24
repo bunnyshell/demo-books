@@ -73,10 +73,6 @@ Available parameters that you can customize and write to a `my_values.yaml` file
 |replicas|The number of replicas|1|
 |ingress.className|The ingress class name to be used|nginx|
 |ingress.host|The host that the ingress resource will use|example.com|
-|postgres.host|The database server host|db| 
-|postgres.db|The database initial database name|bunny_books|
-|postgres.user|The database authentication username|postgres|
-|postgres.password|The database authentication password|pass|
 |frontendUrl|The URL of the frontend application|https://example.com|
 
 ```

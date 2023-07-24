@@ -1,6 +1,3 @@
-const db = require("../models");
-const Book = db.books;
-const Op = db.Sequelize.Op;
 const { XataClient } = require("../models/xata");
 const fetch = require("node-fetch");
 
