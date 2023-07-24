@@ -29,7 +29,9 @@ exports.create = (req, res) => {
     available: req.body.available ? req.body.available : false,
   };
 
-  Book.create(book)
+  const xata = getXataClient();
+  xata.db.books
+    .create(book)
     .then((data) => {
       res.send(data);
     })
@@ -61,7 +63,9 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Book.findByPk(id)
+  const xata = getXataClient();
+  xata.db.books
+    .read(id)
     .then((data) => {
       if (data) {
         res.send(data);
@@ -81,9 +85,9 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  Book.update(req.body, {
-    where: { id: id },
-  })
+  const xata = getXataClient();
+  xata.db.books
+    .update(id, req.body)
     .then((num) => {
       if (num == 1) {
         res.send({
@@ -105,9 +109,9 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  Book.destroy({
-    where: { id: id },
-  })
+  const xata = getXataClient();
+  xata.db.books
+    .delete([id])
     .then((num) => {
       if (num == 1) {
         res.send({
@@ -127,23 +131,27 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  Book.destroy({
-    where: {},
-    truncate: false,
-  })
-    .then((nums) => {
-      res.send({ message: `${nums} Books were deleted successfully` });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "An error occurred while removing all the Books",
+  const xata = getXataClient();
+  xata.db.books.getAll().then((books) => {
+    xata.db.books
+      .delete(books)
+      .then((nums) => {
+        res.send({ message: `${nums} Books were deleted successfully` });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message:
+            err.message || "An error occurred while removing all the Books",
+        });
       });
-    });
+  });
 };
 
 exports.findAllAvailable = (req, res) => {
-  Book.findAll({ where: { available: true } })
+  const xata = getXataClient();
+  xata.db.books
+    .filter({ available: true })
+    .getAll()
     .then((data) => {
       res.send(data);
     })
