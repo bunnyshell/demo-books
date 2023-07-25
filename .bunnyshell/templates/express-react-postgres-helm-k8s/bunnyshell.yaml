@@ -1,35 +1,34 @@
 kind: Environment
-name: Demo Books
+name: Express / React / PostgreSQL boilerplate, with Helm and Kubernetes manifests
 type: primary
 environmentVariables:
   BACKEND_URL: 'https://api-{{ env.base_domain }}'
   FRONTEND_URL: 'https://frontend-{{ env.base_domain }}'
+  FRONTEND_URL_NO_SCHEME: 'frontend-{{ env.base_domain }}'
   POSTGRES_DB: bunny_books
   POSTGRES_PASSWORD: mysecretpassword
   POSTGRES_USER: postgres
-
 components:
-  - kind: DockerImage
+  -
+    kind: DockerImage
     name: frontend-image
-    context: /frontend
-    dockerfile: Dockerfile
+    gitRepo: 'https://github.com/bunnyshell/templates.git'
+    gitBranch: react-books-app/v0.6.0
+    gitApplicationPath: /components/react-books-app
+    context: /components/react-books-app
+    dockerfile: .docker/Dockerfile
     target: prod
-    args:
-      REACT_APP_BASE_API: '{{ env.vars.BACKEND_URL }}'
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
-    gitBranch: master
-    gitApplicationPath: /frontend
-
-  - kind: DockerImage
-    name: backend-image
-    context: /backend
-    dockerfile: Dockerfile
+  -
+    kind: DockerImage
+    name: api-image
+    gitRepo: 'https://github.com/bunnyshell/templates.git'
+    gitBranch: express-rest-api/v0.3.0
+    gitApplicationPath: /components/express-rest-api
+    context: /components/express-rest-api
+    dockerfile: .docker/Dockerfile
     target: prod
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
-    gitBranch: master
-    gitApplicationPath: /backend
-
-  - kind: Helm
+  -
+    kind: Helm
     name: postgres
     runnerImage: 'dtzar/helm-kubectl:3.8.2'
     deploy:
@@ -53,14 +52,17 @@ components:
       - 'kubectl scale --replicas=0 --namespace {{ env.k8s.namespace }} statefulset/postgres-postgresql'
     exportVariables:
       - POSTGRES_HOST
-
-  - kind: Helm
+  -
+    kind: Helm
     name: api
+    gitRepo: 'https://github.com/bunnyshell/templates.git'
+    gitBranch: express-rest-api/v0.3.0
+    gitApplicationPath: /components/express-rest-api
     runnerImage: 'dtzar/helm-kubectl:3.8.2'
     deploy:
       - |
         cat << EOF > my_values.yaml
-            serviceImage: {{ components.backend-image.image }}
+            serviceImage: {{ components.api-image.image }}
             replicas: 1
             ingress:
                 className: bns-nginx
@@ -72,35 +74,33 @@ components:
                 password: '{{ env.vars.POSTGRES_PASSWORD }}'
             frontendUrl: '{{ env.vars.FRONTEND_URL }}'
         EOF
-      - 'helm upgrade --install --namespace {{ env.k8s.namespace }} --dependency-update --post-renderer /bns/helpers/helm/add_labels/kustomize -f my_values.yaml api-{{ env.unique }} ./helm/backend'
+      - 'helm upgrade --install --namespace {{ env.k8s.namespace }} --dependency-update --post-renderer /bns/helpers/helm/add_labels/kustomize -f my_values.yaml api-{{ env.unique }} ./components/express-rest-api/helm-chart'
     destroy:
       - 'helm uninstall api-{{ env.unique }} --namespace {{ env.k8s.namespace }}'
     start:
-      - 'helm upgrade --namespace {{ env.k8s.namespace }} --post-renderer /bns/helpers/helm/add_labels/kustomize --reuse-values --set replicas=1 api-{{ env.unique }} ./helm/backend'
+      - 'helm upgrade --namespace {{ env.k8s.namespace }} --post-renderer /bns/helpers/helm/add_labels/kustomize --reuse-values --set replicas=1 api-{{ env.unique }} ./components/express-rest-api/helm-chart'
     stop:
-      - 'helm upgrade --namespace {{ env.k8s.namespace }} --post-renderer /bns/helpers/helm/add_labels/kustomize --reuse-values --set replicas=0 api-{{ env.unique }} ./helm/backend'
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
-    gitBranch: master
-    gitApplicationPath: /helm/backend
-
-  - kind: KubernetesManifest
+      - 'helm upgrade --namespace {{ env.k8s.namespace }} --post-renderer /bns/helpers/helm/add_labels/kustomize --reuse-values --set replicas=0 api-{{ env.unique }} ./components/express-rest-api/helm-chart'
+  -
+    kind: KubernetesManifest
     name: frontend
+    gitRepo: 'https://github.com/bunnyshell/templates.git'
+    gitBranch: react-books-app/v0.6.0
+    gitApplicationPath: /components/react-books-app
     runnerImage: 'alpine/k8s:1.22.15'
     deploy:
-      - 'cd manifests/frontend'
+      - 'cd ./components/react-books-app/k8s-manifests'
       - 'kustomize create --autodetect --recursive --labels=app.kubernetes.io/instance-frontend:bns,app.kubernetes.io/part-of:env-{{ env.unique }} --namespace {{ env.k8s.namespace }}'
       - 'kustomize edit set image needsimage={{ components.frontend-image.image }}'
-      - 'sed -i "s/frontend.example.com/frontend-{{ env.base_domain }}/g" ingress.yaml'
+      - 'sed -i "s#api.example.com#$BACKEND_URL#g" deployment.yaml'
+      - 'sed -i "s/frontend.example.com/$FRONTEND_URL_NO_SCHEME/g" ingress.yaml'
       - 'sed -i "s/ingressClassName: nginx/ingressClassName: bns-nginx/g" ingress.yaml'
       - 'kubectl apply -k .'
     destroy:
-      - 'cd manifests/frontend'
+      - 'cd ./components/react-books-app/k8s-manifests'
       - 'kustomize create --autodetect --recursive --namespace {{ env.k8s.namespace }}'
       - 'kubectl delete -k .'
     start:
       - 'kubectl scale --replicas=1 --namespace {{ env.k8s.namespace }} deployment/frontend'
     stop:
       - 'kubectl scale --replicas=0 --namespace {{ env.k8s.namespace }} deployment/frontend'
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
-    gitBranch: master
-    gitApplicationPath: /manifests/frontend
