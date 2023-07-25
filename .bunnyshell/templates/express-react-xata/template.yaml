@@ -1,0 +1,15 @@
+name: Express + React + xata.io
+description: This is a boilerplate for creating a new environment using Node, Express, React (with Typescript) and a xata.io database. It contains a basic CRUD example to demonstrate how components connect and make it easy to start with.
+tags: [ nodejs, express, react, typescript, xata ]
+icons: [ nodejs, express, react, typescript, xata ]
+stack:
+  packages:
+    - name: Node.js
+      version: '18'
+    - name: Express
+      version: '4'
+    - name: React
+      version: '17'
+    - name: Typescript
+      version: '4.4'
+discoverable: true

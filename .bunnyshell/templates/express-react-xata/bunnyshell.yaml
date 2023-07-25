@@ -1,0 +1,74 @@
+kind: Environment
+name: Express / React / Xata  boilerplate
+type: primary
+components:
+    -
+        kind: Application
+        name: api
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: xata
+        gitApplicationPath: /backend
+        dockerCompose:
+            build:
+                context: ./backend
+                dockerfile: Dockerfile
+                target: dev
+            environment:
+                FRONTEND_URL: 'https://{{ components.app.ingress.hosts[0].hostname }}'
+                XATA_API_KEY: '{{ components.xata-database.exported.API_TOKEN }}}}'
+                XATA_DATABASE_URL: '{{ components.xata-database.exported.DB_HOST }}'
+                XATA_BRANCH: main
+            ports:
+                - '3080:3080'
+        hosts:
+            -
+                hostname: 'api-{{ env.base_domain }}'
+                path: /
+                servicePort: 3080
+    -
+        kind: Application
+        name: app
+        gitRepo: 'https://github.com/bunnyshell/demo-books.git'
+        gitBranch: xata
+        gitApplicationPath: frontend
+        dockerCompose:
+            build:
+                context: ./frontend
+                dockerfile: Dockerfile
+                target: dev
+            environment:
+                REACT_APP_BASE_API: 'https://{{ components.api.ingress.hosts[0] }}'
+            ports:
+                - '8080:8080'
+        hosts:
+            -
+                hostname: 'app-{{ env.base_domain }}'
+                path: /
+                servicePort: 8080
+    -
+        kind: GenericComponent
+        name: xata-database
+        runnerImage: bunnyshell/basic-runner-image:0.1.0
+        deploy:
+            - curl -L -o create_database.sh https://raw.githubusercontent.com/bunnyshell/connectors/main/xata-dataplatform/scripts/create_database.sh
+            - . create_database.sh
+        destroy:
+            - curl -L -o delete_database.sh https://raw.githubusercontent.com/bunnyshell/connectors/main/xata-dataplatform/scripts/delete_database.sh
+            - . delete_database.sh
+        start:
+            - echo "Start scripts are not needed. Xata has auto-idle and auto-start capabilities, so control from Bunnyshell is not needed."
+        stop:
+            - echo "Stop scripts are not needed. Xata has auto-idle and auto-start capabilities, so control from Bunnyshell is not needed."
+        exportVariables:
+            - API_TOKEN
+            - BRANCH_ID
+            - DB_HOST
+        environment:
+            API_TOKEN: [[XATA_API_TOKEN]]
+            WORKSPACE: [[XATA_WORKSPACE]]
+            REGION: [[XATA_REGION]]
+            DB_NAME: [[XATA_DATABASE_NAME]]
+            TARGET_BRANCH: 'bns-{{ env.unique}}'
+            SOURCE_BRANCH: main
+            BRANCH_ID: '{{ components.xata-database.exported.BRANCH_ID }}'
+            DB_HOST: '{{ components.xata-database.exported.DB_HOST }}'
