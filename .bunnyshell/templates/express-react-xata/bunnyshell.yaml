@@ -65,10 +65,10 @@ components:
             - DB_HOST
             - TARGET_BRANCH
         environment:
-            API_TOKEN: [[XATA_API_TOKEN]]
-            WORKSPACE: [[XATA_WORKSPACE]]
-            REGION: [[XATA_REGION]]
-            DB_NAME: [[XATA_DATABASE_NAME]]
+            API_TOKEN: XATA_API_TOKEN
+            WORKSPACE: XATA_WORKSPACE
+            REGION: XATA_REGION
+            DB_NAME: XATA_DATABASE_NAME
             TARGET_BRANCH: 'bns-{{ env.unique}}'
             SOURCE_BRANCH: main
             BRANCH_ID: '{{ components.xata-database.exported.BRANCH_ID }}'
