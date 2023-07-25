@@ -18,7 +18,7 @@ const tables = [
 /** @type { import('../../client/src').ClientConstructor<{}> } */
 const DatabaseClient = (0, client_1.buildClient)();
 const defaultOptions = {
-  databaseURL: "https://demo-uni3q8.us-east-1.xata.sh/db/books",
+  databaseURL: process.env.XATA_DATABASE_URL,
 };
 /** @typedef { import('./types').DatabaseSchema } DatabaseSchema */
 /** @extends DatabaseClient<DatabaseSchema> */
