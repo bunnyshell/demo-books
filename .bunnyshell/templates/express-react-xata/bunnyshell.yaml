@@ -15,9 +15,9 @@ components:
                 target: dev
             environment:
                 FRONTEND_URL: 'https://{{ components.app.ingress.hosts[0].hostname }}'
-                XATA_API_KEY: '{{ components.xata-database.exported.API_TOKEN }}}}'
+                XATA_API_KEY: '{{ components.xata-database.exported.API_TOKEN }}'
                 XATA_DATABASE_URL: '{{ components.xata-database.exported.DB_HOST }}'
-                XATA_BRANCH: main
+                XATA_BRANCH: '{{ components.xata-database.exported.TARGET_BRANCH }}'
             ports:
                 - '3080:3080'
         hosts:
@@ -63,6 +63,7 @@ components:
             - API_TOKEN
             - BRANCH_ID
             - DB_HOST
+            - TARGET_BRANCH
         environment:
             API_TOKEN: [[XATA_API_TOKEN]]
             WORKSPACE: [[XATA_WORKSPACE]]
