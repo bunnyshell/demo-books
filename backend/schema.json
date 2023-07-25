@@ -1,0 +1,21 @@
+{
+  "tables": [
+    {
+      "name": "books",
+      "columns": [
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "text"
+        },
+        {
+          "name": "available",
+          "type": "bool"
+        }
+      ]
+    }
+  ]
+}

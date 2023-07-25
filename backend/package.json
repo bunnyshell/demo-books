@@ -18,8 +18,10 @@
   "author": "bezkoder",
   "license": "ISC",
   "dependencies": {
+    "@xata.io/client": "^0.24.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "node-fetch": "^2.6.12",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^5.21.3"
