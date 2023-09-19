@@ -1,13 +1,13 @@
 kind: Environment
-name: 'Demo Books with Terraform'
+name: Express / React / PostgreSQL / S3 boilerplate
 type: primary
 environmentVariables:
-  AWS_ACCESS_KEY_ID: your-key
-  AWS_REGION: your-region
-  AWS_SECRET_ACCESS_KEY: your-secret
-  POSTGRES_DB: bunny_books
-  POSTGRES_PASSWORD: mysecretpassword
-  POSTGRES_USER: postgres
+    AWS_ACCESS_KEY_ID: your-key
+    AWS_REGION: your-region
+    AWS_SECRET_ACCESS_KEY: your-secret
+    POSTGRES_DB: bunny_books
+    POSTGRES_PASSWORD: mysecretpassword
+    POSTGRES_USER: postgres
 components:
     -
         kind: Application
@@ -96,3 +96,14 @@ volumes:
         name: db-data
         size: 1Gi
         type: disk
+dev:
+    api:
+        -
+            containers:
+                api:
+                    remoteDevProfile: api
+    frontend:
+        -
+            containers:
+                frontend:
+                    remoteDevProfile: frontend

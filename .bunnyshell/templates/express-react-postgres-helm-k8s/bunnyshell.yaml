@@ -1,5 +1,5 @@
 kind: Environment
-name: Demo Books
+name: Express / React / PostgreSQL boilerplate, with Helm and Kubernetes manifests
 type: primary
 environmentVariables:
   BACKEND_URL: 'https://api-{{ env.base_domain }}'
@@ -16,7 +16,7 @@ components:
     target: prod
     args:
       REACT_APP_BASE_API: '{{ env.vars.BACKEND_URL }}'
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
+    gitRepo: 'https://github.com/bunnyshell/demo-books.git'
     gitBranch: master
     gitApplicationPath: /frontend
 
@@ -25,7 +25,7 @@ components:
     context: /backend
     dockerfile: Dockerfile
     target: prod
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
+    gitRepo: 'https://github.com/bunnyshell/demo-books.git'
     gitBranch: master
     gitApplicationPath: /backend
 
@@ -84,7 +84,7 @@ components:
       - 'helm upgrade --namespace {{ env.k8s.namespace }} --post-renderer /bns/helpers/helm/add_labels/kustomize --reuse-values --set replicas=1 api-{{ env.unique }} ./helm/backend'
     stop:
       - 'helm upgrade --namespace {{ env.k8s.namespace }} --post-renderer /bns/helpers/helm/add_labels/kustomize --reuse-values --set replicas=0 api-{{ env.unique }} ./helm/backend'
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
+    gitRepo: 'https://github.com/bunnyshell/demo-books.git'
     gitBranch: master
     gitApplicationPath: /helm/backend
 
@@ -95,7 +95,7 @@ components:
       - 'cd manifests/frontend'
       - 'kustomize create --autodetect --recursive --labels=app.kubernetes.io/instance-frontend:bns,app.kubernetes.io/part-of:env-{{ env.unique }} --namespace {{ env.k8s.namespace }}'
       - 'kustomize edit set image needsimage={{ components.frontend-image.image }}'
-      - 'sed -i "s/frontend.example.com/frontend-{{ env.base_domain }}/g" ingress.yaml'
+      - 'sed -i "s/frontend.example.com/$FRONTEND_URL_NO_SCHEME/g" ingress.yaml'
       - 'sed -i "s/ingressClassName: nginx/ingressClassName: bns-nginx/g" ingress.yaml'
       - 'kubectl apply -k .'
     destroy:
@@ -106,6 +106,6 @@ components:
       - 'kubectl scale --replicas=1 --namespace {{ env.k8s.namespace }} deployment/frontend'
     stop:
       - 'kubectl scale --replicas=0 --namespace {{ env.k8s.namespace }} deployment/frontend'
-    gitRepo: 'git://github.com/bunnyshellosi/demo-books.git'
+    gitRepo: 'https://github.com/bunnyshell/demo-books.git'
     gitBranch: master
     gitApplicationPath: /manifests/frontend
