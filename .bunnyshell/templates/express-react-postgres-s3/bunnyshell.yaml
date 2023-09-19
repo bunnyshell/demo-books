@@ -97,10 +97,10 @@ volumes:
         size: 1Gi
         type: disk
 dev:
-    api:
+    backend:
         -
             containers:
-                api:
+                backend:
                     remoteDevProfile: api
     frontend:
         -
