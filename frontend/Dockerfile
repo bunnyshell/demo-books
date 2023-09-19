@@ -7,7 +7,7 @@ ARG REACT_APP_BASE_API
 ENV REACT_APP_BASE_API $REACT_APP_BASE_API
 
 # setup workdir (next commands will run under this context, but also the running container will inherit this - if not overriden at runtime)
-WORKDIR /var/www/frontend
+WORKDIR /usr/src/app/
 
 # Build App
 # - copy package.json and yarn.lock (optimise image build - copy only these files and run install, if these change rarely we can reuse this image layer too)
@@ -23,28 +23,24 @@ EXPOSE 8080
 
 CMD ["npm", "start"]
 
-# build stage
-FROM dev as build
 
-# - build app
+
+# prod (and build) stages
+FROM dev AS build
+
 RUN npm run build
 
-# prod stage
-FROM node:16-alpine as prod
 
-ENV NODE_ENV production
 
-ARG REACT_APP_BASE_API
-ENV REACT_APP_BASE_API $REACT_APP_BASE_API
+# Nginx stage
+FROM nginx:1.21.3-alpine AS prod
 
-# setup workdir (next commands will run under this context, but also the running container will inherit this - if not overriden at runtime)
-WORKDIR /var/www/frontend
+# Copy the built app to the Nginx HTML directory
+COPY --from=build /usr/src/app/build /usr/share/nginx/html
 
-COPY package*.json ./
-RUN npm ci
-
-COPY --from=build /var/www/frontend/build ./build
+COPY nginx.conf  /etc/nginx/conf.d/default.conf
 
 EXPOSE 8080
 
-CMD ["npm", "run", "serve"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
