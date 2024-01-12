@@ -1,0 +1,28 @@
+name: Bunnyshell - Deploy Preview Environment
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+    branches:
+      - '*'
+    paths-ignore:
+      - "*.md"
+  issue_comment:
+    types: [ created, edited ]
+jobs:
+  deploy:
+    name: Deploy Environment
+    uses: bunnyshell/workflows/.github/workflows/prepare-and-deploy-env.yaml@v2
+    with:
+      pr-number: ${{ github.event.number || github.event.issue.number }}
+      git-ref: refs/pull/${{ github.event.number || github.event.issue.number }}/head
+      allowed-users: ${{ vars.BUNNYSHELL_ALLOWED_USERS }}
+      restricted-files: |
+        .bunnyshell/*
+      project-id: ${{ vars.BUNNYSHELL_PROJECT_ID }}
+      cluster-id: ${{ vars.BUNNYSHELL_CLUSTER_ID }}
+      env-name: "Demo PR #${{ github.event.number || github.event.issue.number }}"
+      bunnyshell-yaml-path: .bunnyshell/templates/preview/bunnyshell.yaml
+      comment-on-pr: true
+      deploy-as-stopped: true
+    secrets:
+      bunnyshell-access-token: ${{ secrets.BUNNYSHELL_ACCESS_TOKEN }}
