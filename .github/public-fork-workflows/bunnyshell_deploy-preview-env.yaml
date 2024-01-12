@@ -1,0 +1,31 @@
+name: Bunnyshell - Deploy Preview Environment
+on:
+  workflow_run:
+    workflows:
+      - "Bunnyshell - Prepare Preview Environment Configuration"
+    types:
+      - completed
+permissions:
+  pull-requests: write
+jobs:
+  load-artifact-from-reusable:
+    name: Load artifact values
+    uses: bunnyshell/workflows/.github/workflows/load-artifact.yaml@v2
+    with:
+      workflow_run_id: ${{ github.event.workflow_run.id }}
+
+  deploy:
+    name: Deploy Environment
+    needs: load-artifact-from-reusable
+    uses: bunnyshell/workflows/.github/workflows/deploy-env.yaml@v2
+    concurrency: bns-deploy-${{ needs.load-artifact-from-reusable.outputs.pr-number }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.load-artifact-from-reusable.outputs.skip-deployment == 'false' }}
+    with:
+      pr-number: ${{ needs.load-artifact-from-reusable.outputs.pr-number }}
+      project-id: ${{ vars.BUNNYSHELL_PROJECT_ID }}
+      cluster-id: ${{ vars.BUNNYSHELL_CLUSTER_ID }}
+      env-name: "Demo PR #${{ needs.load-artifact-from-reusable.outputs.pr-number }}"
+      bunnyshell-yaml-contents: ${{ needs.load-artifact-from-reusable.outputs.bunnyshell-yaml-contents }}
+      comment-on-pr: true
+    secrets:
+      bunnyshell-access-token: ${{ secrets.BUNNYSHELL_ACCESS_TOKEN }}

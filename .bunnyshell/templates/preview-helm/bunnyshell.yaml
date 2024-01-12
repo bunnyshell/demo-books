@@ -12,20 +12,20 @@ components:
   -
     kind: DockerImage
     name: frontend-image
-    gitRepo: 'https://github.com/bunnyshell/templates.git'
-    gitBranch: react-books-app/v0.6.0
-    gitApplicationPath: /components/react-books-app
-    context: /components/react-books-app
-    dockerfile: .docker/Dockerfile
+    gitRepo: 'https://github.com/bunnyshell/demo-books-github.git'
+    gitBranch: master
+    gitApplicationPath: frontend
+    context: frontend
+    dockerfile: Dockerfile
     target: prod
   -
     kind: DockerImage
     name: api-image
-    gitRepo: 'https://github.com/bunnyshell/templates.git'
-    gitBranch: express-rest-api/v0.3.0
-    gitApplicationPath: /components/express-rest-api
-    context: /components/express-rest-api
-    dockerfile: .docker/Dockerfile
+    gitRepo: 'https://github.com/bunnyshell/demo-books-github.git'
+    gitBranch: master
+    gitApplicationPath: backend
+    context: backend
+    dockerfile: Dockerfile
     target: prod
   -
     kind: Helm
@@ -55,9 +55,9 @@ components:
   -
     kind: Helm
     name: api
-    gitRepo: 'https://github.com/bunnyshell/templates.git'
-    gitBranch: express-rest-api/v0.3.0
-    gitApplicationPath: /components/express-rest-api
+    gitRepo: 'https://github.com/bunnyshell/demo-books-github.git'
+    gitBranch: master
+    gitApplicationPath: backend
     runnerImage: 'dtzar/helm-kubectl:3.8.2'
     deploy:
       - |
@@ -84,9 +84,9 @@ components:
   -
     kind: KubernetesManifest
     name: frontend
-    gitRepo: 'https://github.com/bunnyshell/templates.git'
-    gitBranch: react-books-app/v0.6.0
-    gitApplicationPath: /components/react-books-app
+    gitRepo: 'https://github.com/bunnyshell/demo-books-github.git'
+    gitBranch: master
+    gitApplicationPath: frontend
     runnerImage: 'alpine/k8s:1.22.15'
     deploy:
       - 'cd ./components/react-books-app/k8s-manifests'

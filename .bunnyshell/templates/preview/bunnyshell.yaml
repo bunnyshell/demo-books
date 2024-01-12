@@ -5,13 +5,13 @@ components:
     -
         kind: Application
         name: api
-        gitRepo: 'https://github.com/bunnyshell/templates.git'
-        gitBranch: express-rest-api/v0.2.0
-        gitApplicationPath: components/express-rest-api
+        gitRepo: 'https://github.com/bunnyshell/demo-books-github.git'
+        gitBranch: master
+        gitApplicationPath: backend
         dockerCompose:
             build:
-                context: ./components/express-rest-api
-                dockerfile: .docker/Dockerfile
+                context: ./backend
+                dockerfile: Dockerfile
                 target: dev
             environment:
                 FRONTEND_URL: 'https://{{ components.app.ingress.hosts[0].hostname }}'
@@ -45,13 +45,13 @@ components:
     -
         kind: Application
         name: app
-        gitRepo: 'https://github.com/bunnyshell/templates.git'
-        gitBranch: react-books-app/v0.5.0
-        gitApplicationPath: components/react-books-app
+        gitRepo: 'https://github.com/bunnyshell/demo-books-github.git'
+        gitBranch: master
+        gitApplicationPath: frontend
         dockerCompose:
             build:
-                context: ./components/react-books-app
-                dockerfile: .docker/Dockerfile
+                context: ./frontend
+                dockerfile: Dockerfile
                 target: dev
             environment:
                 REACT_APP_BASE_API: 'https://{{ components.api.ingress.hosts[0] }}'
