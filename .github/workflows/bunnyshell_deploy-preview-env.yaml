@@ -23,6 +23,6 @@ jobs:
       env-name: "Demo PR #${{ github.event.number || github.event.issue.number }}"
       bunnyshell-yaml-path: .bunnyshell/templates/preview/bunnyshell.yaml
       comment-on-pr: true
-      deploy-as-stopped: true
+      deploy-as-stopped: false
     secrets:
       bunnyshell-access-token: ${{ secrets.BUNNYSHELL_ACCESS_TOKEN }}
