@@ -50,7 +50,9 @@ exports.findOne = (req, res) => {
   Book.findByPk(id)
     .then(data => {
       if (data) {
+        // add id to the displayed book title
         data[0].dataValues.title = data[0].dataValues.title + " / " + data[0].dataValues.id;
+
         res.send(data);
       } else {
         res.status(404).send({
