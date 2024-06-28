@@ -10,8 +10,8 @@ ENV REACT_APP_BASE_API $REACT_APP_BASE_API
 WORKDIR /usr/src/app/
 
 # Add a group and user for code-server and nginx
-RUN addgroup -g 1000 code-server-user && \
-    adduser -D -u 1000 -G code-server-user code-server-user && \
+RUN addgroup -g 1114 code-server-user && \
+    adduser -D -u 1114 -G code-server-user code-server-user && \
     adduser code-server-user code-server-user
 
 # Build App
