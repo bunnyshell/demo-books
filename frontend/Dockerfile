@@ -26,8 +26,9 @@ COPY . .
 
 # Change ownership of the application source code
 RUN chown -R code-server-user:code-server-user /usr/src/app
+RUN chown -R code-server-user:code-server-user /root/.npm
 
 EXPOSE 8080
 
-CMD ["npm", "run", "watch"]
+CMD ["npm", "run", "start"]
 
