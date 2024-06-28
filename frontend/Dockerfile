@@ -12,14 +12,14 @@ WORKDIR /usr/src/app/
 # Add a group and user for code-server and nginx
 RUN addgroup -g 1000 code-server-user && \
     adduser -D -u 1000 -G code-server-user code-server-user && \
-    adduser code-server-user nginx
+    adduser code-server-user code-server-user
 
 # Build App
 # - copy package.json and yarn.lock (optimise image build - copy only these files and run install, if these change rarely we can reuse this image layer too)
 COPY package*.json ./
 
 # - install packages (optimise image build - run just install after copying package.json, we hope these will change rarer as the code, so we can reuse this image layer too)
-RUN npm ci
+RUN npm i
 
 # - copy the rest of the code (except the ones in .dockerignore) (optimise image build - we expect these to change everytime, so keep this as late as possible)
 COPY . .
