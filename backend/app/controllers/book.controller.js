@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 exports.create = (req, res) => {
   if (!req.body.title) {
     res.status(400).send({
-      message: "The title can not be empty"
+      message: "The title can dasd not be empty"
     });
     return;
   }
