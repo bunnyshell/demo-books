@@ -23,7 +23,7 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "An error occurred while adding the Book"
+          err.message || "An error occurred while adding the Book test"
       });
     });
 };
